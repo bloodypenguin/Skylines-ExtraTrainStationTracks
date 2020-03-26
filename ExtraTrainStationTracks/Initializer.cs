@@ -98,12 +98,17 @@ namespace ElevatedTrainStationTrack
             };
             return newMaterial;
         }
-
-        public class UndergroundTrainStationTrackAI : MetroTrackAI
+        
+        public class UndergroundTrainStationTrackAI : MetroTrackTunnelAI
         {
             public override bool IsUnderground()
             {
                 return false;
+            }
+
+            public override bool BuildUnderground()
+            {
+                return true;
             }
         }
 
@@ -119,7 +124,6 @@ namespace ElevatedTrainStationTrack
             var metroAI = prefab.GetComponent<MetroTrackAI>();
             GameObject.DestroyImmediate(metroAI);
             var trackAI = prefab.gameObject.AddComponent<UndergroundTrainStationTrackAI>();
-            trackAI.m_transportInfo = PrefabCollection<TransportInfo>.FindLoaded("Train");
             prefab.m_netAI = trackAI;
             trackAI.m_createPassMilestone = trainStationTrack.GetComponent<TrainTrackAI>().m_createPassMilestone;
             trackAI.m_info = prefab;

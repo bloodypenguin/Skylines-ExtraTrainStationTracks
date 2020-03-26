@@ -39,7 +39,6 @@ namespace ElevatedTrainStationTrack
             {
                 mesh.LoadOBJ(OBJLoader.LoadOBJ(fileStream));
             }
-            mesh.Optimize();
             mesh.name = meshName;
             if (!mesh.name.Contains("LOD"))
             {
