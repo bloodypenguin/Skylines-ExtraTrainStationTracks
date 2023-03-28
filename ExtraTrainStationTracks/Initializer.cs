@@ -41,24 +41,26 @@ namespace ElevatedTrainStationTrack
                 SetupTunnelPrefab); //for compatibility, never change this prefab's name
         }
 
-        private static void SetupElevatedPrefab(NetInfo elevatedPrefab)
+        private static void SetupElevatedPrefab(NetInfo clonedPrefab)
         {
-            SetupElevatedPrefab(elevatedPrefab, false);
+            SetupElevatedPrefab(clonedPrefab, false);
         }
 
-        private static void SetupElevatedPrefab(NetInfo elevatedPrefab, bool concrete)
+        private static void SetupElevatedPrefab(NetInfo clonedPrefab, bool concrete)
         {
+            var trainTrackAI = clonedPrefab.GetComponent<TrainTrackAI>();
+            trainTrackAI.m_elevatedInfo = clonedPrefab;
             var elevatedTrack = FindOriginalPrefab("Train Station Track Elevated");
             if (elevatedTrack == null || !concrete)
             {
                 return;
             }
-            elevatedPrefab.m_segments[0].m_segmentMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_segmentMaterial);
-            elevatedPrefab.m_segments[0].m_material = ModifyRailMaterial(elevatedTrack.m_segments[0].m_material);
-            elevatedPrefab.m_segments[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_lodMaterial);
-            elevatedPrefab.m_nodes[0].m_material = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_material);
-            elevatedPrefab.m_nodes[0].m_nodeMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_nodeMaterial);
-            elevatedPrefab.m_nodes[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_lodMaterial);
+            clonedPrefab.m_segments[0].m_segmentMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_segmentMaterial);
+            clonedPrefab.m_segments[0].m_material = ModifyRailMaterial(elevatedTrack.m_segments[0].m_material);
+            clonedPrefab.m_segments[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_lodMaterial);
+            clonedPrefab.m_nodes[0].m_material = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_material);
+            clonedPrefab.m_nodes[0].m_nodeMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_nodeMaterial);
+            clonedPrefab.m_nodes[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_lodMaterial);
         }
 
         private static Material ModifyRailMaterial(Material material)
