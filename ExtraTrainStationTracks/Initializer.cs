@@ -8,22 +8,22 @@ namespace ElevatedTrainStationTrack
     {
         protected override void InitializeImpl()
         {
-            CreatePrefab("Station Track Eleva", "Train Station Track",
+            CreatePrefab("Station Track Eleva", "Train Station Track Elevated",
                 SetupElevatedPrefab); //for compatibility, never change this prefab's name
-            CreatePrefab("Station Track Elevated (C)", "Train Station Track",
+            CreatePrefab("Station Track Elevated (C)", "Train Station Track Elevated",
                 new Action<NetInfo, bool>(SetupElevatedPrefab).Apply(true));
-            CreatePrefab("Station Track Elevated (NP)", "Train Station Track",
+            CreatePrefab("Station Track Elevated (NP)", "Train Station Track Elevated",
                 new Action<NetInfo>(SetupElevatedPrefab).Chain(Modifiers.RemoveElectricityPoles));
-            CreatePrefab("Station Track Elevated (CNP)", "Train Station Track",
+            CreatePrefab("Station Track Elevated (CNP)", "Train Station Track Elevated",
                 new Action<NetInfo, bool>(SetupElevatedPrefab).Apply(true).Chain(Modifiers.RemoveElectricityPoles));
 
-            CreatePrefab("Station Track Elevated Narrow", "Train Station Track",
+            CreatePrefab("Station Track Elevated Narrow", "Train Station Track Elevated",
                 new Action<NetInfo>(SetupElevatedPrefab).Chain(Modifiers.MakePedestrianLanesNarrow));
-            CreatePrefab("Station Track Elevated Narrow (C)", "Train Station Track",
+            CreatePrefab("Station Track Elevated Narrow (C)", "Train Station Track Elevated",
                 new Action<NetInfo, bool>(SetupElevatedPrefab).Apply(true).Chain(Modifiers.MakePedestrianLanesNarrow));
-            CreatePrefab("Station Track Elevated Narrow (NP)", "Train Station Track",
+            CreatePrefab("Station Track Elevated Narrow (NP)", "Train Station Track Elevated",
                 new Action<NetInfo>(SetupElevatedPrefab).Chain(Modifiers.RemoveElectricityPoles).Chain(Modifiers.MakePedestrianLanesNarrow));
-            CreatePrefab("Station Track Elevated Narrow (CNP)", "Train Station Track",
+            CreatePrefab("Station Track Elevated Narrow (CNP)", "Train Station Track Elevated",
                 new Action<NetInfo, bool>(SetupElevatedPrefab).Apply(true).Chain(Modifiers.RemoveElectricityPoles).Chain(Modifiers.MakePedestrianLanesNarrow));
 
             CreatePrefab("Station Track Sunken", "Train Station Track",
@@ -48,49 +48,21 @@ namespace ElevatedTrainStationTrack
 
         private static void SetupElevatedPrefab(NetInfo elevatedPrefab, bool concrete)
         {
-            var stationAI = elevatedPrefab.GetComponent<TrainTrackAI>();
-            stationAI.m_elevatedInfo = elevatedPrefab;
-
-            elevatedPrefab.m_followTerrain = false;
-            elevatedPrefab.m_flattenTerrain = false;
-            elevatedPrefab.m_createGravel = false;
-            elevatedPrefab.m_createPavement = false;
-            elevatedPrefab.m_createRuining = false;
-            elevatedPrefab.m_requireSurfaceMaps = false;
-            elevatedPrefab.m_clipTerrain = false;
-            elevatedPrefab.m_snapBuildingNodes = false;
-            elevatedPrefab.m_placementStyle = ItemClass.Placement.Procedural;
-            elevatedPrefab.m_useFixedHeight = true;
-            elevatedPrefab.m_lowerTerrain = true;
-            elevatedPrefab.m_availableIn = ItemClass.Availability.GameAndAsset;
-            var elevatedTrack = FindOriginalPrefab("Train Track Elevated");
-            if (elevatedTrack == null)
+            var elevatedTrack = FindOriginalPrefab("Train Station Track Elevated");
+            if (elevatedTrack == null || !concrete)
             {
                 return;
             }
-            var etstMesh = Util.LoadMesh(string.Concat(Util.AssemblyDirectory, "/TTNR.obj"), "ETST ");
-            var etstSegmentLodMesh = Util.LoadMesh(string.Concat(Util.AssemblyDirectory, "/TTNR_LOD.obj"), "ETST_SLOD");
-            var etstNodeLodMesh = Util.LoadMesh(string.Concat(Util.AssemblyDirectory, "/TTNR_Node_LOD.obj"), "ETST_NLOD");
-            elevatedPrefab.m_segments[0].m_segmentMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_segmentMaterial, concrete);
-            elevatedPrefab.m_segments[0].m_material = ModifyRailMaterial(elevatedTrack.m_segments[0].m_material, concrete);
-            elevatedPrefab.m_segments[0].m_mesh = etstMesh;
-            elevatedPrefab.m_segments[0].m_segmentMesh = etstMesh;
-            elevatedPrefab.m_segments[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_lodMaterial, concrete);
-            elevatedPrefab.m_segments[0].m_lodMesh = etstSegmentLodMesh;
-            elevatedPrefab.m_nodes[0].m_material = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_material, concrete);
-            elevatedPrefab.m_nodes[0].m_nodeMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_nodeMaterial, concrete);
-            elevatedPrefab.m_nodes[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_lodMaterial, concrete);
-            elevatedPrefab.m_nodes[0].m_lodMesh = etstNodeLodMesh;
-            elevatedPrefab.m_nodes[0].m_nodeMesh = etstMesh;
-            elevatedPrefab.m_nodes[0].m_mesh = etstMesh;
+            elevatedPrefab.m_segments[0].m_segmentMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_segmentMaterial);
+            elevatedPrefab.m_segments[0].m_material = ModifyRailMaterial(elevatedTrack.m_segments[0].m_material);
+            elevatedPrefab.m_segments[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_segments[0].m_lodMaterial);
+            elevatedPrefab.m_nodes[0].m_material = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_material);
+            elevatedPrefab.m_nodes[0].m_nodeMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_nodeMaterial);
+            elevatedPrefab.m_nodes[0].m_lodMaterial = ModifyRailMaterial(elevatedTrack.m_nodes[0].m_lodMaterial);
         }
 
-        private static Material ModifyRailMaterial(Material material, bool concrete)
+        private static Material ModifyRailMaterial(Material material)
         {
-            if (!concrete)
-            {
-                return material;
-            }
             var newMaterial = new Material(material)
             {
                 name = $"{material.name}-concrete",

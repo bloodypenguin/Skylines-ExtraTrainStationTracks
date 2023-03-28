@@ -58,25 +58,39 @@ namespace ElevatedTrainStationTrack
 
         protected void CreatePrefab(string newPrefabName, string originalPrefabName, Action<NetInfo> setupAction)
         {
-            var originalPrefab = FindOriginalPrefab(originalPrefabName);
+            try
+            {
+                var originalPrefab = FindOriginalPrefab(originalPrefabName);
 
-            if (originalPrefab == null)
-            {
-                Debug.LogErrorFormat("AbstractInitializer#CreatePrefab - Prefab '{0}' not found (required for '{1}')", originalPrefabName, newPrefabName);
-                return;
+                if (originalPrefab == null)
+                {
+                    Debug.LogErrorFormat(
+                        "AbstractInitializer#CreatePrefab - Prefab '{0}' not found (required for '{1}')",
+                        originalPrefabName, newPrefabName);
+                    return;
+                }
+
+                if (_customPrefabs.ContainsKey(newPrefabName))
+                {
+                    return;
+                }
+
+                var newPrefab = Util.ClonePrefab(originalPrefab, newPrefabName, transform);
+                if (newPrefab == null)
+                {
+                    Debug.LogErrorFormat("AbstractInitializer#CreatePrefab - Couldn't make prefab '{0}'",
+                        newPrefabName);
+                    return;
+                }
+
+                setupAction.Invoke(newPrefab);
+                _customPrefabs.Add(newPrefabName, newPrefab);
             }
-            if (_customPrefabs.ContainsKey(newPrefabName))
+            catch (Exception e)
             {
-                return;
+                UnityEngine.Debug.LogError($"ETST - failed to create {newPrefabName}");
+                UnityEngine.Debug.LogException(e);
             }
-            var newPrefab = Util.ClonePrefab(originalPrefab, newPrefabName, transform);
-            if (newPrefab == null)
-            {
-                Debug.LogErrorFormat("AbstractInitializer#CreatePrefab - Couldn't make prefab '{0}'", newPrefabName);
-                return;
-            }
-            setupAction.Invoke(newPrefab);
-            _customPrefabs.Add(newPrefabName, newPrefab);
 
         }
 

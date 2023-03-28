@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using ColossalFramework.Plugins;
 using ICities;
-using ObjUnity3D;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -30,21 +28,6 @@ namespace ElevatedTrainStationTrack
         public static FieldInfo GetFieldByName(this Type type, string name)
         {
             return type.GetAllFieldsFromType().Where(p => p.Name == name).FirstOrDefault();
-        }
-
-        public static Mesh LoadMesh(string fullPath, string meshName)
-        {
-            var mesh = new Mesh();
-            using (var fileStream = File.Open(fullPath, FileMode.Open))
-            {
-                mesh.LoadOBJ(OBJLoader.LoadOBJ(fileStream));
-            }
-            mesh.name = meshName;
-            if (!mesh.name.Contains("LOD"))
-            {
-                mesh.UploadMeshData(true);
-            }
-            return mesh;
         }
 
         public static NetInfo ClonePrefab(NetInfo originalPrefab, string newName, Transform parentTransform)
