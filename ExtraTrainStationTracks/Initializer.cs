@@ -48,8 +48,6 @@ namespace ElevatedTrainStationTrack
 
         private static void SetupElevatedPrefab(NetInfo clonedPrefab, bool concrete)
         {
-            var trainTrackAI = clonedPrefab.GetComponent<TrainTrackAI>();
-            trainTrackAI.m_elevatedInfo = clonedPrefab;
             var elevatedTrack = FindOriginalPrefab("Train Station Track Elevated");
             if (elevatedTrack == null || !concrete)
             {
