@@ -70,19 +70,6 @@ namespace ElevatedTrainStationTrack
             };
             return newMaterial;
         }
-        
-        public class UndergroundTrainStationTrackAI : MetroTrackTunnelAI
-        {
-            public override bool IsUnderground()
-            {
-                return false;
-            }
-
-            public override bool BuildUnderground()
-            {
-                return true;
-            }
-        }
 
         private static void SetupTunnelPrefab(NetInfo prefab)
         {
@@ -93,9 +80,9 @@ namespace ElevatedTrainStationTrack
             prefab.m_class.m_layer = ItemClass.Layer.MetroTunnels | ItemClass.Layer.Default;
             prefab.m_canCollide = false;
 
-            var metroAI = prefab.GetComponent<MetroTrackAI>();
+            var metroAI = prefab.GetComponent<MetroTrackTunnelAI>();
             GameObject.DestroyImmediate(metroAI);
-            var trackAI = prefab.gameObject.AddComponent<UndergroundTrainStationTrackAI>();
+            var trackAI = prefab.gameObject.AddComponent<MetroTrackTunnelAI>();
             prefab.m_netAI = trackAI;
             trackAI.m_createPassMilestone = trainStationTrack.GetComponent<TrainTrackAI>().m_createPassMilestone;
             trackAI.m_info = prefab;
@@ -105,8 +92,7 @@ namespace ElevatedTrainStationTrack
 
             prefab.m_averageVehicleLaneSpeed = trainStationTrack.m_averageVehicleLaneSpeed;
             prefab.m_vehicleTypes = VehicleInfo.VehicleType.Train;
-            prefab.m_buildHeight = 0;
-
+            
             foreach (var lane in prefab.m_lanes)
             {
                 if (lane.m_vehicleType == VehicleInfo.VehicleType.None)
@@ -123,8 +109,6 @@ namespace ElevatedTrainStationTrack
 
         private static void SetupSunkenPrefab(NetInfo sunkenPrefab)
         {
-
-
             var stationAI = sunkenPrefab.GetComponent<TrainTrackAI>();
             stationAI.m_tunnelInfo = sunkenPrefab;
 
